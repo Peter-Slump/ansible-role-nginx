@@ -1,0 +1,33 @@
+---
+
+- name: Create SSL folder
+  file:
+    path: "{{ nginx_ssl_folder }}"
+    state: directory
+    mode: 750
+
+- name: Make sure OpenSSL is installed
+  apt:
+    name: openssl
+    state: latest
+
+- name: Create strong Diffie-Hellman cipher
+  command: openssl dhparam -out dhparams.pem 2048
+  args:
+    chdir: "{{ nginx_ssl_folder }}"
+    creates: "{{ nginx_ssl_folder }}/dhparams.pem"
+  notify:
+    - Reload Nginx
+
+- name: Do Let's encrypt stuff
+  include: letsencrypt.yml
+  when: nginx_use_letsencrypt and nginx_ssl_hostname
+
+- name: Create self-signed certificates
+  include: ssl_certificates.yml
+  when: nginx_use_self_signed_ssl and nginx_ssl_hostname
+
+- name: "UFW: allow HTTPS"
+  ufw:
+    rule: allow
+    name: 'Nginx HTTPS'

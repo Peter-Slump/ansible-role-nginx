@@ -1,0 +1,19 @@
+---
+
+- name: Configure monitoring
+  template:
+    src: etc/monit/conf-available/nginx.j2
+    dest: /etc/monit/conf-available/nginx
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload Monit
+
+- name: Enable Monit configuration
+  file:
+    src: "/etc/monit/conf-available/nginx"
+    dest: /etc/monit/conf-enabled/nginx
+    state: link
+  notify:
+    - Reload Monit

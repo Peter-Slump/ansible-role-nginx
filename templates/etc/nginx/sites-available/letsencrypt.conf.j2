@@ -1,0 +1,10 @@
+server {
+  # Non-HTTPS server for serving challenges
+  listen 80;
+  listen [::]:80;
+  server_name _;
+
+  location '/.well-known/acme-challenge' {
+      root {{ nginx_letsencrypt_webroot }};
+  }
+}

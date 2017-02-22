@@ -1,0 +1,21 @@
+---
+
+- name: Install required packages
+  apt:
+    name: nginx
+    state: latest
+
+- name: Remove default configuration
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- include: monit.yml
+
+- name: "UFW: allow HTTP"
+  ufw:
+    rule: allow
+    name: 'Nginx HTTP'
+
+- include: ssl.yml
+  when: nginx_use_self_signed_ssl or nginx_use_letsencrypt

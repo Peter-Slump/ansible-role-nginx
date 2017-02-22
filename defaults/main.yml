@@ -1,0 +1,11 @@
+---
+
+nginx_letsencrypt_webroot: /usr/share/nginx/html
+nginx_letsencrypt_email: admin@example.com
+
+nginx_use_letsencrypt: False
+nginx_use_self_signed_ssl: False
+
+nginx_ssl_hostname: example.com
+
+nginx_ssl_folder: /etc/nginx/ssl

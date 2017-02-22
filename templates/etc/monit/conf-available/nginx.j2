@@ -1,0 +1,7 @@
+# This file is maintained by Ansible all changes will be overwritten.
+
+check process nginx with pidfile /var/run/nginx.pid
+  start program = "/etc/init.d/nginx start"
+  stop program  = "/etc/init.d/nginx stop"
+  if failed port 80 then restart
+  {% if nginx_use_self_signed_ssl or nginx_use_letsencrypt %}if failed port 443 with timeout 15 seconds then restart{% endif %}

@@ -1,0 +1,11 @@
+---
+
+- name: Create self-signed key/certificate pair
+  shell: >
+            openssl req -newkey rsa:2048 -x509 -nodes
+            -days 365 -subj "/CN={{ nginx_ssl_hostname }}"
+            -out /usr/local/share/ca-certificates/{{ nginx_ssl_hostname }}.crt
+            -keyout /etc/ssl/private/{{ nginx_ssl_hostname }}.key &&
+            update-ca-certificates
+  args:
+    creates: /usr/local/share/ca-certificates/{{ nginx_ssl_hostname }}.crt

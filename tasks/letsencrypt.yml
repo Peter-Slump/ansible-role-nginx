@@ -1,0 +1,56 @@
+---
+
+- name: Install Git
+  apt:
+    name: git
+    state: present
+
+- name: Check-out Let's Encrypt library
+  git:
+    repo: https://github.com/letsencrypt/letsencrypt
+    dest: /opt/letsencrypt
+
+- stat:
+    path: "/etc/letsencrypt/live/{{ nginx_ssl_hostname }}/privkey.pem"
+  register: ssl_cert_stat
+
+- name: Install nginx config
+  template:
+    src: etc/nginx/sites-available/letsencrypt.conf.j2
+    dest: /etc/nginx/sites-available/letsencrypt.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable Nginx's Let's encrypt configuration for {{ nginx_ssl_hostname }}
+  file:
+    state: link
+    src: "/etc/nginx/sites-available/letsencrypt.conf"
+    dest: "/etc/nginx/sites-enabled/01-letsencrypt.conf"
+
+- name: Reload Nginx
+  service:
+    name: nginx
+    state: reloaded
+
+- name: Obtain certificate
+  command: ./letsencrypt-auto certonly --webroot -w {{ nginx_letsencrypt_webroot }} -d {{ nginx_ssl_hostname }} --email {{ nginx_letsencrypt_email }} --agree-tos
+  args:
+    chdir: /opt/letsencrypt
+  when: ssl_cert_stat.stat.exists == False
+
+- name: Setup automatically renew
+  cron:
+    name: "Letsencrypt renew"
+    hour: 2
+    minute: 15
+    day: 1
+    job: "/opt/letsencrypt/letsencrypt-auto renew > /var/log/letsencrypt-renew.log"
+
+- name: Setup reload Nginx
+  cron:
+    name: "Reload Nginx"
+    hour: 2
+    minute: 30
+    day: 1
+    job: "/etc/init.d/nginx reload"
