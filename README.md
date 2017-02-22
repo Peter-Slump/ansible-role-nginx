@@ -6,6 +6,9 @@ Supported OS: Ubuntu
 
 This role enables you to install Nginx. It has support for Let's Encrypt or self-signed certificates.
 
+- Configures Monit for monitoring
+- Configures firewall using UFW: opens HTTP port and when required the port for HTTPS
+
 ## Role variables
 
 ```
