@@ -1,0 +1,39 @@
+---
+
+- name: configure | Add configs
+  template:
+    src: etc/nginx/conf.d/nginx.conf.j2
+    dest: "/etc/nginx/conf.d/{{ item.name }}.conf"
+  with_items: "{{ nginx_configs }}"
+  notify:
+    - Reload Nginx
+  tags:
+    - nginx
+    - configure
+
+- name: configure | Install site configurations
+  template:
+    src: etc/nginx/sites-available/site.conf.j2
+    dest: "/etc/nginx/sites-available/{{ site.server_name }}.conf"
+  with_items: "{{ nginx_sites }}"
+  loop_control:
+    loop_var: site
+  notify:
+    - Reload Nginx
+  tags:
+    - nginx
+    - configure
+
+- name: configure | Enable site configurations
+  file:
+    src: "/etc/nginx/sites-available/{{ site.server_name }}.conf"
+    dest: "/etc/nginx/sites-enabled/01-{{ site.server_name }}.conf"
+    state: link
+  with_items: "{{ nginx_sites }}"
+  loop_control:
+    loop_var: site
+  notify:
+    - Reload Nginx
+  tags:
+    - nginx
+    - configure

@@ -1,56 +1,83 @@
 ---
 
-- name: Install Git
+- name: letsencrypt | Install Git
   apt:
     name: git
     state: present
+  tags:
+    - nginx
+    - letsencrypt
 
-- name: Check-out Let's Encrypt library
+- name: letsencrypt | Check-out Let's Encrypt library
   git:
     repo: https://github.com/letsencrypt/letsencrypt
     dest: /opt/letsencrypt
+  tags:
+    - nginx
+    - letsencrypt
 
-- stat:
-    path: "/etc/letsencrypt/live/{{ nginx_ssl_hostname }}/privkey.pem"
-  register: ssl_cert_stat
-
-- name: Install nginx config
+- name: letsencrypt | Install nginx config
   template:
     src: etc/nginx/sites-available/letsencrypt.conf.j2
     dest: /etc/nginx/sites-available/letsencrypt.conf
     owner: root
     group: root
     mode: 0644
+  tags:
+    - nginx
+    - letsencrypt
 
-- name: Enable Nginx's Let's encrypt configuration for {{ nginx_ssl_hostname }}
+- name: letsencrypt | Enable Nginx's Let's encrypt configuration
   file:
     state: link
     src: "/etc/nginx/sites-available/letsencrypt.conf"
     dest: "/etc/nginx/sites-enabled/01-letsencrypt.conf"
+  tags:
+    - nginx
+    - letsencrypt
 
-- name: Reload Nginx
+- name: letsencrypt | Reload Nginx
   service:
     name: nginx
     state: reloaded
+  tags:
+    - nginx
+    - letsencrypt
 
-- name: Obtain certificate
-  command: ./letsencrypt-auto certonly --webroot -w {{ nginx_letsencrypt_webroot }} -d {{ nginx_ssl_hostname }} --email {{ nginx_letsencrypt_email }} --agree-tos
+- stat:
+    path: "/etc/letsencrypt/live/{{ item.server_name }}/privkey.pem"
+  register: ssl_cert_stat
+  tags:
+    - nginx
+    - letsencrypt
+
+- name: letsencrypt | Obtain certificate
+  command: ./letsencrypt-auto certonly --webroot -w {{ nginx_letsencrypt_webroot }} -d {{ item.server_name }} --email {{ nginx_letsencrypt_email }} --agree-tos
   args:
     chdir: /opt/letsencrypt
   when: ssl_cert_stat.stat.exists == False
+  tags:
+    - nginx
+    - letsencrypt
 
-- name: Setup automatically renew
+- name: letsencrypt | Setup automatically renew
   cron:
     name: "Letsencrypt renew"
     hour: 2
     minute: 15
     day: 1
     job: "/opt/letsencrypt/letsencrypt-auto renew > /var/log/letsencrypt-renew.log"
+  tags:
+    - nginx
+    - letsencrypt
 
-- name: Setup reload Nginx
+- name: letsencrypt | Setup reload Nginx
   cron:
     name: "Reload Nginx"
     hour: 2
     minute: 30
     day: 1
     job: "/etc/init.d/nginx reload"
+  tags:
+    - nginx
+    - letsencrypt

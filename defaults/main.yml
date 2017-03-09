@@ -9,3 +9,22 @@ nginx_use_self_signed_ssl: False
 nginx_ssl_hostname: example.com
 
 nginx_ssl_folder: /etc/nginx/ssl
+
+nginx_configs: []
+
+# nginx_configs:
+#   - name: upstream
+#     content: |
+#       upstream php-upstream-handler {
+#         server 127.0.0.1:9001;
+#       }
+
+nginx_sites: []
+
+# nginx_sites:
+#   - server_name: example.com
+#     ssl_type: letsencrypt  # letsencrypt | self-signed | none
+#     root: /path/to/root
+#     index: index.html
+#     extra: |
+#       # All kind of extra configs

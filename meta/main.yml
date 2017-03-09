@@ -1,14 +1,9 @@
 ---
 
 dependencies:
-  - src: https://github.com/Peter-Slump/ansible-role-monit.git
-    version: v0.0.1
-    scm: git
-    name: monit
   - src: https://github.com/Peter-Slump/ansible-role-ufw.git
     version: v0.0.2
     scm: git
     name: ufw
 
-  - role: monit
   - role: ufw
