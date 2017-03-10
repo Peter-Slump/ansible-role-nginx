@@ -14,10 +14,10 @@
 - name: configure | Install site configurations
   template:
     src: etc/nginx/sites-available/site.conf.j2
-    dest: "/etc/nginx/sites-available/{{ site.server_name }}.conf"
+    dest: "/etc/nginx/sites-available/{{ server.server_name }}.conf"
   with_items: "{{ nginx_sites }}"
   loop_control:
-    loop_var: site
+    loop_var: server
   notify:
     - Reload Nginx
   tags:

@@ -31,20 +31,20 @@
 - name: ssl | Do Let's encrypt stuff
   include: letsencrypt.yml
   with_items: "{{ ngixn_sites }}"
-  when: item.ssl_type == letsencrypt
+  when: item.ssl_type == 'letsencrypt'
   tags:
     - nginx
     - ssl
 
 - name: ssl | Create self-signed certificates
   include: self_signed_ssl.yml
-  with_items: "{{ ngixn_sites }}"
-  when: item.ssl_type == self-signed
+  with_items: "{{ nginx_sites }}"
+  when: item.ssl_type == 'self-signed'
   tags:
     - nginx
     - ssl
 
-- name: ssl | "UFW: allow HTTPS"
+- name: "ssl | UFW: allow HTTPS"
   ufw:
     rule: allow
     name: 'Nginx HTTPS'

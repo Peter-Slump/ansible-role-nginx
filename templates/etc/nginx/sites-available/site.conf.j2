@@ -47,8 +47,9 @@ server {
   access_log /var/log/nginx/{{ server.server_name }}.access.log combined;
   error_log /var/log/nginx/{{ server.server_name }}.error.log;
 
-  {% if server.root is defined and server.root %}root {{ server.root }}{% endif %}
-  {% if server.index is defined and server.index %}index {{ server.index }}{% endif %}
+  {% if server.root is defined and server.root %}root {{ server.root }};{% endif %}
+
+  {% if server.index is defined and server.index %}index {{ server.index }};{% endif %}
 
   {{ server.extra }}
 }

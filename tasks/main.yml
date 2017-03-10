@@ -14,7 +14,7 @@
   tags:
     - nginx
 
-- name: main | "UFW: allow HTTP"
+- name: "main | UFW: allow HTTP"
   ufw:
     rule: allow
     name: 'Nginx HTTP'
