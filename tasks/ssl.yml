@@ -30,7 +30,7 @@
 
 - name: ssl | Do Let's encrypt stuff
   include: letsencrypt.yml
-  with_items: "{{ ngixn_sites }}"
+  with_items: "{{ nginx_sites }}"
   when: item.ssl_type == 'letsencrypt'
   tags:
     - nginx
