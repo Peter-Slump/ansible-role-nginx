@@ -1,6 +1,6 @@
 # Ansible role Nginx
 
-Version: 0.1.1
+Version: 0.1.2
 
 Supported OS: Ubuntu
 
