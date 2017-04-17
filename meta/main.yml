@@ -5,5 +5,3 @@ dependencies:
     version: v0.1.0
     scm: git
     name: ufw
-
-  - role: ufw
